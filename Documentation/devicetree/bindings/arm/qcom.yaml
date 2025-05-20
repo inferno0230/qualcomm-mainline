@@ -1102,6 +1102,7 @@ properties:
       - items:
           - enum:
               - ayaneo,pocket-s2
+              - oneplus,caihong
               - qcom,sm8650-hdk
               - qcom,sm8650-mtp
               - qcom,sm8650-qrd
