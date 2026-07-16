@@ -162,6 +162,15 @@ config INPUT_KUNIT_TEST
 
 	  If in doubt, say "N".
 
+config INPUT_PANIC_ON_VOLUME_KEYS
+	bool "Panic when a volume key is pressed"
+	help
+	  This is a bring-up aid which deliberately panics the kernel when an
+	  input driver reports a key-down event for KEY_VOLUMEUP or
+	  KEY_VOLUMEDOWN. Key releases, repeats and all other keys are ignored.
+
+	  Do not enable this option in a production kernel.
+
 config INPUT_APMPOWER
 	tristate "Input Power Event -> APM Bridge" if EXPERT
 	depends on INPUT && APM_EMULATION

@@ -27,6 +27,7 @@
 #include <linux/gpio/consumer.h>
 #include <linux/of.h>
 #include <linux/of_irq.h>
+#include <linux/panic.h>
 #include <linux/spinlock.h>
 #include <dt-bindings/input/gpio-keys.h>
 
@@ -377,6 +378,14 @@ static void gpio_keys_gpio_report_event(struct gpio_button_data *bdata)
 		if (state)
 			input_event(input, type, button->code, button->value);
 	} else {
+#ifdef CONFIG_INPUT_PANIC_ON_VOLUME_KEYS
+		if (type == EV_KEY && state &&
+		    (*bdata->code == KEY_VOLUMEUP ||
+		     *bdata->code == KEY_VOLUMEDOWN))
+			panic("CAIHONG-KEYPANIC: GPIO volume key code %u pressed",
+			      *bdata->code);
+#endif
+
 		input_event(input, type, *bdata->code, state);
 	}
 }

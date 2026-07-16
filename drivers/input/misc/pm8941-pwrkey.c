@@ -14,6 +14,7 @@
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/of_address.h>
+#include <linux/panic.h>
 #include <linux/platform_device.h>
 #include <linux/reboot.h>
 #include <linux/regmap.h>
@@ -166,6 +167,13 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
 		return IRQ_HANDLED;
 
 	sts &= pwrkey->data->status_bit;
+
+#ifdef CONFIG_INPUT_PANIC_ON_VOLUME_KEYS
+	if (sts && (pwrkey->code == KEY_VOLUMEUP ||
+		    pwrkey->code == KEY_VOLUMEDOWN))
+		panic("CAIHONG-KEYPANIC: PMIC volume key code %u pressed",
+		      pwrkey->code);
+#endif
 
 	if (pwrkey->sw_debounce_time_us && !sts)
 		pwrkey->sw_debounce_end_time = ktime_add_us(ktime_get(),
