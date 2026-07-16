@@ -43,7 +43,11 @@
 	chassis-type = "tablet";
 
 	aliases {
-		serial0 = &uart14;
+		serial0 = &uart15;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
 	};
 
 	bl_avdd_5p9: bl-avdd-regulator {
@@ -906,6 +910,10 @@
 
 		max-speed = <3200000>;
 	};
+};
+
+&uart15 {
+	status = "okay";
 };
 
 &ufs_mem_hc {
