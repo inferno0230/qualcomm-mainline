@@ -9,6 +9,7 @@
 /dts-v1/;
 
 #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+#include <dt-bindings/arm/qcom,ids.h>
 #include "sm8650.dtsi"
 #include "pm8550.dtsi"
 #include "pm8550b.dtsi"
@@ -36,6 +37,9 @@
 / {
 	model = "Oneplus Pad Pro";
 	compatible = "oneplus,caihong", "qcom,sm8650";
+	qcom,msm-id = <QCOM_ID_SM8650 0x20000>,
+		      <0x241 0x20000>;
+	qcom,board-id = <QCOM_BOARD_ID_MTP 0>;
 	chassis-type = "tablet";
 
 	aliases {
