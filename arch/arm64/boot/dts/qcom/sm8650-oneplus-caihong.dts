@@ -635,7 +635,8 @@
 };
 
 &mdss {
-	status = "okay";
+	/* Keep ABL's active MDSS stream unattached from Linux's SMMU domain. */
+	status = "disabled";
 };
 
 &mdss_dsi0 {
@@ -692,7 +693,7 @@
 &mdss_dsi0_phy {
 	vdds-supply = <&vreg_l1i_0p88>;
 
-	status = "okay";
+	status = "disabled";
 };
 
 &mdss_dsi1 {
@@ -716,11 +717,11 @@
 &mdss_dsi1_phy {
 	vdds-supply = <&vreg_l1i_0p88>;
 
-	status = "okay";
+	status = "disabled";
 };
 
 &mdss_dp0 {
-	status = "okay";
+	status = "disabled";
 };
 
 &mdss_dp0_out {
@@ -774,6 +775,11 @@
 &pm8550b_eusb2_repeater {
 	vdd18-supply = <&vreg_l15b_1p8>;
 	vdd3-supply = <&vreg_l5b_3p1>;
+
+	qcom,tune-usb2-amplitude = /bits/ 8 <0x0d>;
+	qcom,tune-usb2-disc-thres = /bits/ 8 <0x06>;
+	qcom,squelch-detector-bp = <0>;
+	qcom,tune-usb2-preem = /bits/ 8 <0x03>;
 };
 
 &pon_pwrkey {
@@ -935,8 +941,13 @@
 };
 
 &usb_1 {
-	dr_mode = "otg";
-	usb-role-switch;
+	/delete-property/ usb-role-switch;
+
+	dr_mode = "peripheral";
+	maximum-speed = "high-speed";
+	phys = <&usb_1_hsphy>;
+	phy-names = "usb2-phy";
+	qcom,select-utmi-as-pipe-clk;
 
 	status = "okay";
 };
@@ -958,7 +969,7 @@
 	vdda-phy-supply = <&vreg_l3i_1p2>;
 	vdda-pll-supply = <&vreg_l3g_0p91>;
 
-	status = "okay";
+	status = "disabled";
 };
 
 &usb_dp_qmpphy_out {
