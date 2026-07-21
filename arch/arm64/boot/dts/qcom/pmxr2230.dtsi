@@ -1,17 +1,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
-/*
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
- */
-
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/spmi/spmi.h>
 
 / {
 	thermal-zones {
-		pm7550ba-thermal {
+		pmxr2230-thermal {
 			polling-delay-passive = <100>;
 
-			thermal-sensors = <&pm7550ba_temp_alarm>;
+			thermal-sensors = <&pmxr2230_temp_alarm>;
 
 			trips {
 				trip0 {
@@ -37,39 +33,39 @@
 };
 
 &spmi_bus {
-	pm7550ba: pmic@7 {
-		compatible = "qcom,pm7550ba", "qcom,spmi-pmic";
-		reg = <7 SPMI_USID>;
+	pmxr2230: pmic@1 {
+		compatible = "qcom,pmxr2230", "qcom,spmi-pmic";
+		reg = <0x1 SPMI_USID>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		pm7550ba_temp_alarm: temp-alarm@a00 {
+		pmxr2230_temp_alarm: temp-alarm@a00 {
 			compatible = "qcom,spmi-temp-alarm";
 			reg = <0xa00>;
-			interrupts = <0x7 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
+			interrupts = <0x1 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
 			#thermal-sensor-cells = <0>;
 		};
 
-		pm7550ba_gpios: gpio@8800 {
-			compatible = "qcom,pm7550ba-gpio", "qcom,spmi-gpio";
+		pmxr2230_gpios: gpio@8800 {
+			compatible = "qcom,pmxr2230-gpio", "qcom,spmi-gpio";
 			reg = <0x8800>;
 			gpio-controller;
-			gpio-ranges = <&pm7550ba_gpios 0 0 8>;
+			gpio-ranges = <&pmxr2230_gpios 0 0 12>;
 			#gpio-cells = <2>;
 			interrupt-controller;
 			#interrupt-cells = <2>;
 		};
 
-		pm7550ba_vib: vibrator@df00 {
-			compatible = "qcom,pm7550ba-vib", "qcom,pmi632-vib";
-			reg = <0xdf00>;
+		pmxr2230_flash: led-controller@ee00 {
+			compatible = "qcom,pmxr2230-flash-led", "qcom,spmi-flash-led";
+			reg = <0xee00>;
 			status = "disabled";
 		};
 
-		pm7550ba_eusb2_repeater: phy@fd00 {
-			compatible = "qcom,pm7550ba-eusb2-repeater", "qcom,pm8550b-eusb2-repeater";
-			reg = <0xfd00>;
-			#phy-cells = <0>;
+		pmxr2230_pwm: pwm {
+			compatible = "qcom,pmxr2230-pwm", "qcom,pm8350c-pwm";
+			#pwm-cells = <2>;
+			status = "disabled";
 		};
 	};
 };

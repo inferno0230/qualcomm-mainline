@@ -1,0 +1,46 @@
+// SPDX-License-Identifier: BSD-3-Clause
+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+
+#include "pm7550ba.dtsi"
+
+&apps_rsc {
+	regulators-0 {
+		compatible = "qcom,pm7550-rpmh-regulators";
+		qcom,pmic-id = "b";
+
+		vreg_l7b_1p8: ldo7 {
+			regulator-name = "vreg_l7b_1p8";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+
+		vreg_l17b_3p1: ldo17 {
+			regulator-name = "vreg_l17b_3p1";
+			regulator-min-microvolt = <3104000>;
+			regulator-max-microvolt = <3104000>;
+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+		};
+	};
+};
+
+&pm7550ba_eusb2_repeater {
+	vdd18-supply = <&vreg_l7b_1p8>;
+	vdd3-supply = <&vreg_l17b_3p1>;
+
+	qcom,tune-eusb2-slew = /bits/ 8 <0x0>;
+	qcom,tune-usb2-amplitude = /bits/ 8 <0xf>;
+	qcom,tune-usb2-disc-thres = /bits/ 8 <0x6>;
+	qcom,tune-usb2-preem = /bits/ 8 <0x5>;
+	qcom,squelch-detector-bp = <(-6000)>;
+
+	status = "okay";
+};
+
+&pm7550ba_vib {
+	status = "okay";
+};
+
+&usb_1_hsphy {
+	phys = <&pm7550ba_eusb2_repeater>;
+};

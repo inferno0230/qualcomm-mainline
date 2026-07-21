@@ -54,6 +54,12 @@ properties:
     minimum: 0
     maximum: 7
 
+  qcom,tune-eusb2-slew:
+    $ref: /schemas/types.yaml#/definitions/uint8
+    description: High-Speed eUSB2 slew-rate tuning
+    minimum: 0
+    maximum: 7
+
   qcom,tune-res-fsdif:
     $ref: /schemas/types.yaml#/definitions/uint8
     description: FS Differential TX Output Resistance Tuning

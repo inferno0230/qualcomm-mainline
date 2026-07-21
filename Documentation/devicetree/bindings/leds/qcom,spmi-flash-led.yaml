@@ -31,6 +31,7 @@ properties:
           - qcom,pm8550-flash-led
           - qcom,pmh0101-flash-led
           - qcom,pmi8998-flash-led
+          - qcom,pmxr2230-flash-led
       - const: qcom,spmi-flash-led
 
   reg:
