@@ -31,4 +31,8 @@
 #define VCODEC_VIDEO_CC_MVS0C_BCR				3
 #define VIDEO_CC_MVS0C_CLK_ARES					4
 
+/* VIDEO_CC power domains */
+#define VIDEO_CC_MVS0_GDSC					0
+#define VIDEO_CC_MVS0C_GDSC					1
+
 #endif
