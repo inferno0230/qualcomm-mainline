@@ -6,23 +6,23 @@
 #include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
 #include <dt-bindings/clock/qcom,rpmh.h>
 #include <dt-bindings/clock/qcom,sm7550-camcc.h>
-#include <dt-bindings/clock/qcom,dispcc-crow.h>
-#include <dt-bindings/clock/qcom,gcc-crow.h>
-#include <dt-bindings/clock/qcom,gpucc-crow.h>
-#include <dt-bindings/clock/qcom,tcsrcc-kalama.h>
+#include <dt-bindings/clock/qcom,sm7550-dispcc.h>
+#include <dt-bindings/clock/qcom,sm7550-gcc.h>
+#include <dt-bindings/clock/qcom,sm7550-gpucc.h>
+#include <dt-bindings/clock/qcom,sm7550-tcsr.h>
 #include <dt-bindings/clock/qcom,sm7550-videocc.h>
-#include <dt-bindings/interconnect/qcom,icc.h>
-#include <dt-bindings/interconnect/qcom,crow.h>
-#include <dt-bindings/interrupt-controller/arm-gic.h>
-#include <dt-bindings/soc/qcom,ipcc.h>
-#include <dt-bindings/soc/qcom,rpmh-rsc.h>
-#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
-#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
+#include <dt-bindings/dma/qcom-gpi.h>
 #include <dt-bindings/gpio/gpio.h>
-#include <dt-bindings/spmi/spmi.h>
-#include <dt-bindings/power/qcom-aoss-qmp.h>
-#include <dt-bindings/clock/qcom,aop-qmp.h>
+#include <dt-bindings/interconnect/qcom,icc.h>
+#include <dt-bindings/interconnect/qcom,sm7550-rpmh.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/mailbox/qcom-ipcc.h>
 #include <dt-bindings/phy/phy-qcom-qmp.h>
+#include <dt-bindings/power/qcom,rpmhpd.h>
+#include <dt-bindings/soc/qcom,gpr.h>
+#include <dt-bindings/soc/qcom,rpmh-rsc.h>
+#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
+#include <dt-bindings/thermal/thermal.h>
 
 / {
 	interrupt-parent = <&intc>;

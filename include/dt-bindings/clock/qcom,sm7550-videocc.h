@@ -3,8 +3,8 @@
  * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
-#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_CROW_H
-#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_CROW_H
+#ifndef _DT_BINDINGS_CLK_QCOM_SM7550_VIDEO_CC_H
+#define _DT_BINDINGS_CLK_QCOM_SM7550_VIDEO_CC_H
 
 /* VIDEO_CC clocks */
 #define VIDEO_CC_PLL0						0
