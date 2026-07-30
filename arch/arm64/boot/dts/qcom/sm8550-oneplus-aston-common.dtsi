@@ -1,0 +1,56 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (c) 2026, inferno0230 <mail@inferno0230.in>
+ */
+
+#include "sm8550-oneplus-common.dtsi"
+
+/ {
+	compatible = "oneplus,aston", "qcom,sm8550";
+
+	chosen {
+		/* Reuse the bootloader splash region as a framebuffer. */
+		framebuffer: framebuffer@b8000000 {
+			compatible = "simple-framebuffer";
+			memory-region = <&cont_splash_mem>;
+			width = <1264>;
+			height = <2780>;
+			stride = <(1264 * 4)>;
+			format = "a8r8g8b8";
+		};
+	};
+};
+
+&vreg_l2g {
+    regulator-name = "vreg_l2g_1p05";
+    regulator-min-microvolt = <1050000>;
+};
+
+&remoteproc_adsp {
+	firmware-name = "qcom/sm8550/OnePlus/aston/adsp.mbn",
+			"qcom/sm8550/OnePlus/aston/adsp_dtb.mbn";
+	status = "okay";
+};
+
+&remoteproc_cdsp {
+	firmware-name = "qcom/sm8550/OnePlus/aston/cdsp.mbn",
+			"qcom/sm8550/OnePlus/aston/cdsp_dtb.mbn";
+	status = "okay";
+};
+
+&usb_1 {
+	/* Only USB2.0 is supported. */
+	maximum-speed = "high-speed";
+	phy-names = "usb2-phy";
+	qcom,select-utmi-as-pipe-clk;
+
+	status = "okay";
+};
+
+&usb_dp_qmpphy {
+	status = "disabled";
+};
+
+&dispcc {
+    status = "disabled";
+};
