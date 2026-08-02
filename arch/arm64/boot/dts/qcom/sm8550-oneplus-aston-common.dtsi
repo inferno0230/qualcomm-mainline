@@ -21,9 +21,9 @@
 	};
 };
 
-&vreg_l2g {
-    regulator-name = "vreg_l2g_1p05";
-    regulator-min-microvolt = <1050000>;
+&i2c8 {
+    // compatible = "oplus,bq27541-battery";
+    status = "okay";
 };
 
 &remoteproc_adsp {
@@ -35,6 +35,12 @@
 &remoteproc_cdsp {
 	firmware-name = "qcom/sm8550/OnePlus/aston/cdsp.mbn",
 			"qcom/sm8550/OnePlus/aston/cdsp_dtb.mbn";
+	status = "okay";
+};
+
+&remoteproc_mpss {
+	firmware-name = "qcom/sm8550/OnePlus/aston/modem.mbn",
+			"qcom/sm8550/OnePlus/aston/modem_dtb.mbn";
 	status = "okay";
 };
 
@@ -51,6 +57,12 @@
 	status = "disabled";
 };
 
+// Enabling this will break framebuffer
 &dispcc {
     status = "disabled";
+};
+
+&vreg_l2g {
+    regulator-name = "vreg_l2g_1p05";
+    regulator-min-microvolt = <1050000>;
 };
