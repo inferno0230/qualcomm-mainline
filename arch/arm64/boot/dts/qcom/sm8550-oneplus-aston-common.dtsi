@@ -7,18 +7,10 @@
 
 / {
 	compatible = "oneplus,aston", "qcom,sm8550";
+};
 
-	chosen {
-		/* Reuse the bootloader splash region as a framebuffer. */
-		framebuffer: framebuffer@b8000000 {
-			compatible = "simple-framebuffer";
-			memory-region = <&cont_splash_mem>;
-			width = <1264>;
-			height = <2780>;
-			stride = <(1264 * 4)>;
-			format = "a8r8g8b8";
-		};
-	};
+&dispcc {
+	status = "okay";
 };
 
 &gpu {
@@ -72,9 +64,64 @@
 	status = "disabled";
 };
 
-// Enabling this will break framebuffer
-&dispcc {
-    status = "disabled";
+&mdss {
+	status = "okay";
+};
+
+&mdss_dsi0 {
+	status = "okay";
+
+	panel@0 {
+		compatible = "boe,aa551-p3-a0004";
+		reg = <0>;
+
+		pinctrl-0 = <&sde_dsi_active>, <&sde_te>;
+		pinctrl-1 = <&sde_dsi_suspend>, <&sde_te>;
+		pinctrl-names = "default", "sleep";
+
+		enable-gpios = <&tlmm 90 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
+
+		vci-supply = <&vreg_l13b_3p0>;
+		vddio-supply = <&vreg_l12b_1p8>;
+
+		port {
+			panel_in: endpoint {
+				remote-endpoint = <&mdss_dsi0_out>;
+			};
+		};
+	};
+};
+
+&mdss_dsi0_out {
+	remote-endpoint = <&panel_in>;
+};
+
+&mdss_dsi0_phy {
+	status = "okay";
+};
+
+&tlmm {
+	sde_dsi_active: sde-dsi-active-state {
+		pins = "gpio133";
+		function = "gpio";
+		drive-strength = <8>;
+		bias-disable;
+	};
+
+	sde_dsi_suspend: sde-dsi-suspend-state {
+		pins = "gpio133";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-pull-down;
+	};
+
+	sde_te: sde-te-state {
+		pins = "gpio86";
+		function = "mdp_vsync";
+		drive-strength = <2>;
+		bias-pull-down;
+	};
 };
 
 &vreg_l2g {
