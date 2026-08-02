@@ -16,6 +16,7 @@
 #include "pmr735d_a.dtsi"
 
 /delete-node/ &adspslpi_mem;
+/delete-node/ &rmtfs_mem;
 
 / {
 	chassis-type = "handset";
@@ -38,6 +39,15 @@
 		cont_splash_mem: splash_region@b8000000 {
 			reg = <0 0xb8000000 0 0x2b00000>;
 			no-map;
+		};
+
+		rmtfs_mem: rmtfs-region@d4a80000 {
+			compatible = "qcom,rmtfs-mem";
+			reg = <0x0 0xd4a80000 0x0 0x280000>;
+			no-map;
+
+			qcom,client-id = <1>;
+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
 		};
 	};
 

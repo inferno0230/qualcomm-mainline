@@ -448,7 +448,8 @@ static const struct ipa_mem_data ipa_mem_data = {
 	.local		= ipa_mem_local_data,
 	.imem_addr	= 0x14688000,
 	.imem_size	= 0x00002000,
-	.smem_size	= 0x0000b000,
+    // [  953.616499] qcom_q6v5_pas 4080000.remoteproc: fatal error received: ipa_ipfltr.c:1240:IPA Assert: IPA_SMEM_ALLOC_EX(smem_param) == SMEM_STATUS_SUCCESS failed: ipa_ipfltri_sys_mem_init:shared memory allocation failure of size 45056
+	.smem_size	= 0, // Let modem allocate size itself 
 };
 
 /* Interconnect rates are in 1000 byte/second units */
