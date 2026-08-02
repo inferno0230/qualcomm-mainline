@@ -21,6 +21,14 @@
 	};
 };
 
+&gpu {
+	status = "okay";
+};
+
+&gpu_zap_shader {
+	firmware-name = "qcom/sm8550/OnePlus/aston/a740_zap.mbn";
+};
+
 &i2c8 {
     // compatible = "oplus,bq27541-battery";
     status = "okay";
@@ -38,10 +46,11 @@
 	status = "okay";
 };
 
+/* Modem crashes after some time with "DOG detects stalled initialization" */
 &remoteproc_mpss {
 	firmware-name = "qcom/sm8550/OnePlus/aston/modem.mbn",
 			"qcom/sm8550/OnePlus/aston/modem_dtb.mbn";
-	status = "okay";
+	status = "fail";
 };
 
 &usb_1 {
