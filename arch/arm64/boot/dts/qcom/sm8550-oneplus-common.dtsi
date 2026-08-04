@@ -644,6 +644,14 @@
 	};
 };
 
+&gpi_dma1 {
+	status = "okay";
+};
+
+&gpi_dma2 {
+	status = "okay";
+};
+
 &i2c_master_hub_0 {
 	status = "okay";
 };
@@ -795,7 +803,7 @@
 		bt-en-pins {
 			pins = "gpio81";
 			function = "gpio";
-			drive-strength = <2>;
+			drive-strength = <16>;
 			bias-disable;
 		};
 	};
@@ -803,7 +811,7 @@
 	wlan_en: wlan-en-state {
 		pins = "gpio80";
 		function = "gpio";
-		drive-strength = <16>;
+		drive-strength = <8>;
 		bias-pull-down;
 	};
 };
