@@ -52,8 +52,6 @@ static int boe_aa551_on(struct boe_aa551 *ctx)
 {
 	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
 
-	ctx->dsi->mode_flags |= MIPI_DSI_MODE_LPM;
-
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x00);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x00);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x53, 0x20);
@@ -75,12 +73,14 @@ static int boe_aa551_on(struct boe_aa551 *ctx)
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb5, 0x03);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x08);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc8, 0x62);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x05);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x19);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd0,
+				     0xff, 0xaf, 0x56, 0x3d, 0x2d, 0x2d, 0x2d,
+				     0x2d, 0xff);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x00);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x31);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa0, 0xf3);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x07);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x8a, 0x01);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x8b, 0x11, 0xe0);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81,
 				     0x00, 0x00, 0x00, 0x00, 0x00, 0x12, 0x00,
 				     0x00, 0xab, 0x30, 0x80, 0x0a, 0xdc, 0x04,
@@ -287,15 +287,15 @@ static int boe_aa551_on(struct boe_aa551 *ctx)
 				     0x04, 0x00, 0x04, 0x04, 0x04, 0x05, 0x04,
 				     0x04, 0x04, 0x04);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa5,
-				     0x04, 0x04, 0x04, 0x04, 0x03, 0x08, 0x06,
-				     0x03, 0x04, 0x00, 0x04, 0x09, 0x05, 0x04,
+				     0x04, 0x04, 0x04, 0x04, 0xfa, 0x0f, 0x10,
+				     0x04, 0x04, 0x00, 0x04, 0x09, 0x05, 0x04,
 				     0x03, 0x04);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa9,
 				     0x00, 0x01, 0x01, 0x00, 0x01, 0x00, 0x04,
 				     0x04, 0x00, 0x03, 0x04, 0x04, 0x05, 0x04,
 				     0x04, 0x04, 0x04);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xaa,
-				     0x04, 0x04, 0x04, 0x04, 0x04, 0x06, 0x06,
+				     0x04, 0x04, 0x04, 0x04, 0x08, 0x08, 0x04,
 				     0x04, 0x04, 0x00, 0x04, 0x05, 0x04, 0x04,
 				     0x04, 0x04);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xae,
@@ -364,28 +364,75 @@ static int boe_aa551_on(struct boe_aa551 *ctx)
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x08);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc8, 0x62);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x00);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x03, 0x08, 0x38, 0x02);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x88, 0x02, 0xc0, 0x00);
+
+	return dsi_ctx.accum_err;
+}
+
+static int boe_aa551_set_initial_timing(struct boe_aa551 *ctx)
+{
+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
+
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x2d);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xd0, 0x01);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x02);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa6, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0,
+				     0x01, 0x11, 0x80, 0x00, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0x00, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb1,
+				     0xff, 0xff, 0xff, 0x01, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0x00, 0x00, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc0,
+				     0x00, 0x00, 0x00, 0x00, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfe, 0x00, 0x00, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc1,
+				     0x00, 0x00, 0x00, 0x00, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc2, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xc3, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0x80);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x23);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcb, 0x01);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x65);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81, 0x00, 0x00, 0x30, 0x03);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x82, 0x00, 0x00, 0x30, 0x03);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x83, 0x00, 0x00, 0x30, 0x03);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00, 0x00, 0x30, 0x03);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x85, 0x00, 0x00, 0x30, 0x03);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x23);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcb, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x23);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcb, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x4f);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x81, 0x01);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x80, 0x01);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x88, 0x78);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x02);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa7, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xa2, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x20);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xbc, 0x52);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xbd, 0x34);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xbe, 0x56);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x0b);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x8c, 0x10);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x8d, 0x03);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x8e, 0xbf);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x4f);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x8b, 0x78);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x00);
+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x2c);
+
+	return dsi_ctx.accum_err;
+}
+
+static int boe_aa551_enable(struct drm_panel *panel)
+{
+	struct boe_aa551 *ctx = to_boe_aa551(panel);
+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
+
 	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
 	mipi_dsi_msleep(&dsi_ctx, 120);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x53);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x86, 0x72);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x90,
-				     0x00, 0x00, 0x17, 0x27, 0x27, 0x00, 0x10,
-				     0x00, 0x27, 0x1d, 0x2c, 0x2c, 0x00, 0x18,
-				     0x00, 0x40, 0x2a, 0x30, 0x30, 0x00, 0x40,
-				     0x00, 0x2d, 0x3d, 0x31, 0x61, 0x00, 0x61,
-				     0x00, 0x56, 0x76, 0x6d, 0x7d, 0x00, 0x9d,
-				     0x00, 0x10, 0x30, 0x28, 0x50, 0x00, 0x80,
-				     0x00, 0x38, 0x60, 0x60, 0x7d, 0x00, 0x86,
-				     0x14, 0xb0, 0x20, 0x03, 0xf3, 0x01, 0x33,
-				     0x3f, 0x00, 0xff, 0xff, 0xff, 0x03, 0xff);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x93,
-				     0x10, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-				     0x70, 0x00, 0x10, 0x20, 0x20, 0x20, 0x20,
-				     0x20, 0x20, 0x70, 0x00, 0x10, 0x20, 0x20,
-				     0x20, 0x20, 0x20, 0x20, 0x70, 0x00);
-	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x00);
 	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
 
 	return dsi_ctx.accum_err;
@@ -426,6 +473,15 @@ static int boe_aa551_prepare(struct drm_panel *panel)
 	ret = boe_aa551_on(ctx);
 	if (ret < 0) {
 		dev_err(dev, "Failed to initialize panel: %d\n", ret);
+		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+		regulator_bulk_disable(ARRAY_SIZE(boe_aa551_supplies), ctx->supplies);
+		return ret;
+	}
+
+	ret = boe_aa551_set_initial_timing(ctx);
+	if (ret < 0) {
+		dev_err(dev, "Failed to configure initial timing: %d\n", ret);
 		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
 		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
 		regulator_bulk_disable(ARRAY_SIZE(boe_aa551_supplies), ctx->supplies);
@@ -492,6 +548,7 @@ static int boe_aa551_get_modes(struct drm_panel *panel,
 static const struct drm_panel_funcs boe_aa551_panel_funcs = {
 	.prepare = boe_aa551_prepare,
 	.unprepare = boe_aa551_unprepare,
+	.enable = boe_aa551_enable,
 	.get_modes = boe_aa551_get_modes,
 };
 
@@ -501,13 +558,9 @@ static int boe_aa551_bl_update_status(struct backlight_device *bl)
 	u16 brightness = backlight_get_brightness(bl);
 	int ret;
 
-	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-
 	ret = mipi_dsi_dcs_set_display_brightness_large(dsi, brightness);
 	if (ret < 0)
 		return ret;
-
-	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
 
 	return 0;
 }
@@ -563,8 +616,9 @@ static int boe_aa551_probe(struct mipi_dsi_device *dsi)
 	mipi_dsi_set_drvdata(dsi, ctx);
 
 	dsi->lanes = 4;
-	dsi->format = MIPI_DSI_FMT_RGB888;
-	dsi->mode_flags = MIPI_DSI_MODE_NO_EOT_PACKET |
+	dsi->format = MIPI_DSI_FMT_RGB101010;
+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_BURST |
+			  MIPI_DSI_MODE_NO_EOT_PACKET |
 			  MIPI_DSI_CLOCK_NON_CONTINUOUS;
 
 	ctx->panel.prepare_prev_first = true;
@@ -587,7 +641,7 @@ static int boe_aa551_probe(struct mipi_dsi_device *dsi)
 	ctx->dsc.slice_count = 1264 / ctx->dsc.slice_width;
 	ctx->dsc.bits_per_component = 10;
 	ctx->dsc.bits_per_pixel = 8 << 4; /* 4 fractional bits */
-	ctx->dsc.block_pred_enable = true;
+	ctx->dsc.block_pred_enable = false;
 
 	ret = mipi_dsi_attach(dsi);
 	if (ret < 0) {
