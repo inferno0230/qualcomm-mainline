@@ -92,7 +92,7 @@
 
 &pcieport0 {
 	wifi@0 {
-		status = "disabled";
+		disable-rfkill;
 	};
 };
 
