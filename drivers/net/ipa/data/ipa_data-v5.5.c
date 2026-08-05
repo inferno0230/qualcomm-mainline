@@ -448,7 +448,7 @@ static const struct ipa_mem_data ipa_mem_data = {
 	.local		= ipa_mem_local_data,
 	.imem_addr	= 0x14688000,
 	.imem_size	= 0x00002000,
-	.smem_size	= 0x0000b000,
+	.smem_size	= 0,
 };
 
 /* Interconnect rates are in 1000 byte/second units */
