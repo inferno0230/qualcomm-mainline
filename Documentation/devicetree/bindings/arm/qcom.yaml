@@ -1088,6 +1088,7 @@ properties:
               - qcom,sm8550-hdk
               - qcom,sm8550-mtp
               - qcom,sm8550-qrd
+              - oneplus,aston
               - samsung,q5q
               - sony,pdx234
           - const: qcom,sm8550
