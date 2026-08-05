@@ -52,6 +52,8 @@ static int boe_aa551_on(struct boe_aa551 *ctx)
 {
 	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
 
+	ctx->dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xff, 0x08, 0x38, 0x00);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x35, 0x00);
 	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x53, 0x20);
@@ -473,19 +475,13 @@ static int boe_aa551_prepare(struct drm_panel *panel)
 	ret = boe_aa551_on(ctx);
 	if (ret < 0) {
 		dev_err(dev, "Failed to initialize panel: %d\n", ret);
-		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
-		regulator_bulk_disable(ARRAY_SIZE(boe_aa551_supplies), ctx->supplies);
-		return ret;
+		goto err_power_off;
 	}
 
 	ret = boe_aa551_set_initial_timing(ctx);
 	if (ret < 0) {
 		dev_err(dev, "Failed to configure initial timing: %d\n", ret);
-		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-		gpiod_set_value_cansleep(ctx->enable_gpio, 0);
-		regulator_bulk_disable(ARRAY_SIZE(boe_aa551_supplies), ctx->supplies);
-		return ret;
+		goto err_power_off;
 	}
 
 	drm_dsc_pps_payload_pack(&pps, &ctx->dsc);
@@ -493,29 +489,37 @@ static int boe_aa551_prepare(struct drm_panel *panel)
 	ret = mipi_dsi_picture_parameter_set(ctx->dsi, &pps);
 	if (ret < 0) {
 		dev_err(panel->dev, "failed to transmit PPS: %d\n", ret);
-		return ret;
+		goto err_power_off;
 	}
 
 	ret = mipi_dsi_compression_mode(ctx->dsi, true);
 	if (ret < 0) {
 		dev_err(dev, "failed to enable compression mode: %d\n", ret);
-		return ret;
+		goto err_power_off;
 	}
 
-	msleep(28); /* TODO: Is this panel-dependent? */
+	msleep(28);
 
 	return 0;
+
+err_power_off:
+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+	gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+	regulator_bulk_disable(ARRAY_SIZE(boe_aa551_supplies), ctx->supplies);
+
+	return ret;
+}
+
+static int boe_aa551_disable(struct drm_panel *panel)
+{
+	struct boe_aa551 *ctx = to_boe_aa551(panel);
+
+	return boe_aa551_off(ctx);
 }
 
 static int boe_aa551_unprepare(struct drm_panel *panel)
 {
 	struct boe_aa551 *ctx = to_boe_aa551(panel);
-	struct device *dev = &ctx->dsi->dev;
-	int ret;
-
-	ret = boe_aa551_off(ctx);
-	if (ret < 0)
-		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
 
 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
 	gpiod_set_value_cansleep(ctx->enable_gpio, 0);
@@ -549,6 +553,7 @@ static const struct drm_panel_funcs boe_aa551_panel_funcs = {
 	.prepare = boe_aa551_prepare,
 	.unprepare = boe_aa551_unprepare,
 	.enable = boe_aa551_enable,
+	.disable = boe_aa551_disable,
 	.get_modes = boe_aa551_get_modes,
 };
 
@@ -558,11 +563,13 @@ static int boe_aa551_bl_update_status(struct backlight_device *bl)
 	u16 brightness = backlight_get_brightness(bl);
 	int ret;
 
-	ret = mipi_dsi_dcs_set_display_brightness_large(dsi, brightness);
-	if (ret < 0)
-		return ret;
+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
 
-	return 0;
+	ret = mipi_dsi_dcs_set_display_brightness_large(dsi, brightness);
+
+	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+
+	return ret;
 }
 
 static const struct backlight_ops boe_aa551_bl_ops = {
@@ -617,7 +624,7 @@ static int boe_aa551_probe(struct mipi_dsi_device *dsi)
 
 	dsi->lanes = 4;
 	dsi->format = MIPI_DSI_FMT_RGB101010;
-	dsi->mode_flags = MIPI_DSI_MODE_VIDEO_BURST |
+	dsi->mode_flags = MIPI_DSI_MODE_LPM |
 			  MIPI_DSI_MODE_NO_EOT_PACKET |
 			  MIPI_DSI_CLOCK_NON_CONTINUOUS;
 
