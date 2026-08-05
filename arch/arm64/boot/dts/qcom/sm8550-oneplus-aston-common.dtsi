@@ -1,0 +1,217 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (c) 2026, inferno0230 <mail@inferno0230.in>
+ */
+
+#include "sm8550-oneplus-common.dtsi"
+
+/ {
+	compatible = "oneplus,aston", "qcom,sm8550";
+};
+
+&dispcc {
+	status = "okay";
+};
+
+&gpu {
+	status = "okay";
+};
+
+&gpu_zap_shader {
+	firmware-name = "qcom/sm8550/OnePlus/aston/a740_zap.mbn";
+};
+
+&cci0 {
+	status = "okay";
+};
+
+&cci0_i2c0 {
+	/* Main camera: Sony IMX890, EEPROM, actuator and BU63169 OIS */
+};
+
+&cci0_i2c1 {
+	/* Ultra-wide camera: Sony IMX355 and EEPROM */
+};
+
+&cci1 {
+	/* Master 1: Samsung S5K3P9 front camera and EEPROM on the unmodelled AON CCI bus */
+	status = "okay";
+};
+
+&cci1_i2c0 {
+	/* Macro camera: OmniVision OV02B and EEPROM */
+};
+
+&i2c0 {
+	/* NXP SN220T/SN220U NFC controller @ 0x28 */
+	status = "okay";
+};
+
+&i2c6 {
+	/* NXP TFA9874 speaker amplifier (Top speaker) @ 0x34 */
+	/* NXP TFA9874 speaker amplifier (Bottom speaker) @ 0x35 */
+	status = "okay";
+};
+
+&i2c8 {
+	status = "okay";
+
+	fuel-gauge@55 {
+		compatible = "ti,bq27541";
+		reg = <0x55>;
+	};
+};
+
+&i2c9 {
+	/* AKM AK09970 three-axis Hall sensor for the 
+     * Alert Slider @ 0x10 */
+	status = "okay";
+};
+
+&i2c10 {
+	/* Pixelworks iris display processor @ 0x26, 0x22 */
+	status = "okay";
+};
+
+&i2c12 {
+	/* Southchip SC8517 charge pump @ 0x69 */
+	status = "okay";
+};
+
+&i2c_hub_2 {
+	/* Richwave RTC6226 FM receiver @ 0x64 */
+	status = "okay";
+};
+
+&ipa {
+	qcom,gsi-loader = "self";
+	memory-region = <&ipa_fw_mem>;
+	firmware-name = "qcom/sm8550/OnePlus/aston/ipa_fws.mbn";
+	status = "okay";
+};
+
+&pcieport0 {
+	wifi@0 {
+		status = "disabled";
+	};
+};
+
+&pm8550_flash {
+	status = "okay";
+
+	led-0 {
+		function = LED_FUNCTION_FLASH;
+		color = <LED_COLOR_ID_WHITE>;
+		led-sources = <1>, <4>;
+		led-max-microamp = <500000>;
+		flash-max-microamp = <1000000>;
+		flash-max-timeout-us = <1280000>;
+		function-enumerator = <0>;
+	};
+};
+
+&remoteproc_adsp {
+	firmware-name = "qcom/sm8550/OnePlus/aston/adsp.mbn",
+			"qcom/sm8550/OnePlus/aston/adsp_dtb.mbn";
+	status = "okay";
+};
+
+&remoteproc_cdsp {
+	firmware-name = "qcom/sm8550/OnePlus/aston/cdsp.mbn",
+			"qcom/sm8550/OnePlus/aston/cdsp_dtb.mbn";
+	status = "okay";
+};
+
+&remoteproc_mpss {
+	firmware-name = "qcom/sm8550/OnePlus/aston/modem.mbn",
+			"qcom/sm8550/OnePlus/aston/modem_dtb.mbn";
+	status = "okay";
+};
+
+&spi4 {
+	/* Synaptics S3910 HBP touchscreen */
+	status = "okay";
+};
+
+&spi11 {
+	/* Kookong consumer IR controller */
+	status = "okay";
+};
+
+&usb_1 {
+	/* Only USB2.0 is supported. */
+	maximum-speed = "high-speed";
+	phy-names = "usb2-phy";
+	qcom,select-utmi-as-pipe-clk;
+
+	status = "okay";
+};
+
+&usb_dp_qmpphy {
+	status = "disabled";
+};
+
+&mdss {
+	status = "okay";
+};
+
+&mdss_dsi0 {
+	status = "okay";
+
+	panel@0 {
+		compatible = "boe,aa551-p3-a0004";
+		reg = <0>;
+
+		pinctrl-0 = <&sde_dsi_active>, <&sde_te>;
+		pinctrl-1 = <&sde_dsi_suspend>, <&sde_te>;
+		pinctrl-names = "default", "sleep";
+
+		enable-gpios = <&tlmm 90 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&tlmm 133 GPIO_ACTIVE_LOW>;
+
+		vci-supply = <&vreg_l13b_3p0>;
+		vddio-supply = <&vreg_l12b_1p8>;
+
+		port {
+			panel_in: endpoint {
+				remote-endpoint = <&mdss_dsi0_out>;
+			};
+		};
+	};
+};
+
+&mdss_dsi0_out {
+	remote-endpoint = <&panel_in>;
+};
+
+&mdss_dsi0_phy {
+	status = "okay";
+};
+
+&tlmm {
+	sde_dsi_active: sde-dsi-active-state {
+		pins = "gpio133";
+		function = "gpio";
+		drive-strength = <8>;
+		bias-disable;
+	};
+
+	sde_dsi_suspend: sde-dsi-suspend-state {
+		pins = "gpio133";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-pull-down;
+	};
+
+	sde_te: sde-te-state {
+		pins = "gpio86";
+		function = "mdp_vsync";
+		drive-strength = <2>;
+		bias-pull-down;
+	};
+};
+
+&vreg_l2g {
+    regulator-name = "vreg_l2g_1p05";
+    regulator-min-microvolt = <1050000>;
+};
